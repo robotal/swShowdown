@@ -1,0 +1,19 @@
+{
+  "name": "sw-showdown",
+  "version": "1.0.0",
+  "description": "An online Summoners War battle simulator",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/robotal/swShowdown.git"
+  },
+  "author": "Tal Davidi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/robotal/swShowdown/issues"
+  },
+  "homepage": "https://github.com/robotal/swShowdown#readme"
+}
