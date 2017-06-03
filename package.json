@@ -18,6 +18,10 @@
   },
   "homepage": "https://github.com/robotal/swShowdown#readme",
   "dependencies": {
-    "express": "^4.15.3"
+    "body-parser": "^1.17.2",
+    "express": "^4.15.3",
+    "express-handlebars": "^3.0.0",
+    "morgan": "^1.8.2",
+    "underscore": "^1.8.3"
   }
 }
