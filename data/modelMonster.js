@@ -101,6 +101,7 @@ exports.monsters = {
             'Jump Slam': {
                 unawakened: true,
                 awakened: false,
+                moveIcon: 'https://vignette2.wikia.nocookie.net/summoners-war-sky-arena/images/7/77/Slime_%28Fire%29_Icon.png/revision/latest?cb=20170509104944',
                 description: 'Performs a jump attack, reducing the enemy\'s Attack Speed with a 30% chance.',
                 base_formula: '330% +35' //function which takes in monster (stats + skill level)
                 skill_levels: {
