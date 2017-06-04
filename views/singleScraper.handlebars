@@ -1,0 +1,89 @@
+<div id='header'>
+    <h1>There will be something here one day!</h1>
+
+    <p>Enter url to scrape (everything after the .com)</p>
+    <input id = 'url' type="text" name="scrapeUrl" value="">
+    <button id='loadButton' type="button" name="button">Scrape Wiki</button>
+</div>
+
+<div id="view">
+</div>
+
+<script>
+    var fullObj = {};
+
+    $('#loadButton').on('click', function() {
+        console.clear();
+
+        var url = $('#url').val()
+
+        visitMonsterPage(url,fullObj);
+
+        console.log(fullObj);
+    });
+
+    function visitMonsterPage(linkEnding, fullObj) {
+
+        var url = 'https://crossorigin.me/http://summonerswar.wikia.com' + linkEnding;
+
+        let promise = new Promise((resolve, reject) => {
+            $.ajax({
+                url: url,
+                dataType: 'text',
+                async: false,
+                success: function(data) {
+                    //load in data, start logging everything to store
+
+                    var monsterObj = {};
+
+                    $('#view').html(data);
+                    var monsterName = $('.header-column h1').text();
+                    if (monsterName.match(/(.*) - (.*)/)) {
+                        var match = monsterName.match(/(.*) - (.*)/);
+                        var monster = match[1].split(' ').join('_');
+                        var awakenedName = match[2];
+
+                        var innerMatch = match[1].match(/(.*) \((.*)\)/);
+
+                        var family = innerMatch[1];
+                        var type = innerMatch[2];
+
+                        monsterObj.family = family;
+                        monsterObj.type = type;
+                        monsterObj.awakens = true;
+                        monsterObj.awakenedName = awakenedName;
+
+                        fullObj[monster] = monsterObj;
+                    } else {
+                        var monster = monsterName.split(' ').join('_');
+
+                        var innerMatch = monsterName.match(/(.*) \((.*)\)/);
+                        var family = innerMatch[1];
+                        var type = innerMatch[2];
+
+                        monsterObj.family = family;
+                        monsterObj.type = type;
+                        monsterObj.awakens = false;
+
+                        fullObj[monster] = monsterObj;
+                    }
+
+                    console.log(monsterObj);
+                }
+            });
+        });
+
+        promise.then((succ) => {
+            console.log('returning');
+            return;
+        });
+    }
+
+    function wait(ms) {
+        var start = new Date().getTime();
+        var end = start;
+        while (end < start + ms) {
+            end = new Date().getTime();
+        }
+    }
+</script>

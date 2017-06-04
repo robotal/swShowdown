@@ -1,24 +1,24 @@
 exports.monsters = {
     'slime_(fire)': {
-        'family': 'Slime',
-        'type': 'Fire',
-        'awakens': false,
-        'unawakened_portrait': 'https://vignette2.wikia.nocookie.net/summoners-war-sky-arena/images/7/77/Slime_%28Fire%29_Icon.png/revision/latest?cb=20170509104944',
-        'base_stars': 1,
-        'base_stats': {
+        family: 'Slime',
+        type: 'Fire',
+        awakens: false,
+        unawakened_portrait: 'https://vignette2.wikia.nocookie.net/summoners-war-sky-arena/images/7/77/Slime_%28Fire%29_Icon.png/revision/latest?cb=20170509104944',
+        base_stars: 1,
+        base_stats: {
             1: {
-                'unawakened': {
-                    'hp_min': 450,
-                    'atk_min': 30,
-                    'def_min': 60,
-                    'hp_max': 900,
-                    'atk_max': 60,
-                    'def_max': 120,
-                    'spd': 102,
-                    'crit_rate': 15,
-                    'crit_dmg': 50,
-                    'res': 15,
-                    'acc': 0
+                unawakened: {
+                    hp_min: 450,
+                    atk_min: 30,
+                    def_min: 60,
+                    hp_max: 900,
+                    atk_max: 60,
+                    def_max: 120,
+                    spd: 102,
+                    crit_rate: 15,
+                    crit_dmg: 50,
+                    res: 15,
+                    acc: 0
                 }
             },
             2: {
@@ -97,13 +97,13 @@ exports.monsters = {
                 }
             }
         }
-        'moves': {
+        moves: {
             'Jump Slam': {
-                'unawakened': true,
-                'awakened': false,
-                'description': 'Performs a jump attack, reducing the enemy\'s Attack Speed with a 30% chance.',
-                'base_formula': '330% +35' //function which takes in monster (stats + skill level)
-                'skill_levels': {
+                unawakened: true,
+                awakened: false,
+                description: 'Performs a jump attack, reducing the enemy\'s Attack Speed with a 30% chance.',
+                base_formula: '330% +35' //function which takes in monster (stats + skill level)
+                skill_levels: {
                     2: {
                         type: 'damage', //damage, healing (shielding), harmful effect
                         value: 5
@@ -135,7 +135,5 @@ exports.monsters = {
                 }
             }
         }
-    },
-    "forest_keeper_(fire)": {}
-
+    }
 };
