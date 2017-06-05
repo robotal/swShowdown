@@ -39,7 +39,7 @@ function visitMonsterPage(linkEnding, fullObj) {
     - awakens
     - awakenedName (if applicable)
 */
-function extractBasicInfo(monsterObj){
+function extractBasicInfo(monsterObj) {
     var monsterName = $('.header-column h1').text();
     if (monsterName.match(/(.*) - (.*)/)) {
         var match = monsterName.match(/(.*) - (.*)/);
@@ -75,6 +75,7 @@ function extractBasicInfo(monsterObj){
     - unawakened_portrait
     - awakened_portrait
 */
+
 function extractPortaitLinks(monsterObj){
   var imgs = $('#images a');
   if (imgs.length == 2){
@@ -88,13 +89,37 @@ function extractPortaitLinks(monsterObj){
     monsterObj.unawakened_portrait = u;
   }
 }
-
 /*
     Gets the following attribute:
     - base_stars
 */
-function extractStars(monsterObj){
+function extractStars(monsterObj) {
 
+    if (monsterObj.awakens) {
+
+        var starText = $('img[alt="Gold Star"]').parent()[0].innerText;
+
+        if (starText.match(/^\(x(\d)\)$/)) {
+            var match = starText.match(/^\(x(\d)\)$/);
+
+            var stars = parseInt(match[1]);
+            monsterObj.base_stars = stars;
+        } else {
+            monsterObj.base_stars = 1;
+        }
+    } else {
+
+        var starText = $('img[alt="Silver Star"]').parent()[0].innerText;
+
+        if (starText.match(/^\(x(\d)\)$/)) {
+            var match = starText.match(/^\(x(\d)\)$/);
+
+            var stars = parseInt(match[1]);
+            monsterObj.base_stars = stars;
+        } else {
+            monsterObj.base_stars = 1;
+        }
+    }
 }
 
 /*
@@ -119,8 +144,113 @@ function extractStars(monsterObj){
                 - res
                 - acc
 */
-function extractBaseStats(monsterObj){
+function extractBaseStats(monsterObj) {
 
+    var tableText = $('.boxborder')['2'].outerText;
+    var re = /\d+/g;
+
+    var table_vals = [];
+
+    var match;
+
+    do {
+        match = re.exec(tableText);
+        if (match) {
+            table_vals.push(parseInt(match[0]));
+        }
+    } while (match);
+
+    var statsObj = {};
+    monsterObj.base_stats = statsObj;
+
+    var stars = monsterObj.base_stars;
+
+    for (var i = stars; i <= 6; i++) {
+        statsObj[i] = {};
+    }
+
+    var curIndex = 7 - stars;
+
+    //unawakened stats
+    for (var i = stars; i <= 6; i++) {
+        statsObj[i]['unawakened'] = {};
+    }
+
+    for (var i = stars; i <= 6; i++) {
+        statsObj[i]['unawakened']['hp_min'] = table_vals[curIndex];
+        curIndex++;
+        statsObj[i]['unawakened']['hp_max'] = table_vals[curIndex];
+        curIndex++;
+    }
+
+    for (var i = stars; i <= 6; i++) {
+        statsObj[i]['unawakened']['atk_min'] = table_vals[curIndex];
+        curIndex++;
+        statsObj[i]['unawakened']['atk_max'] = table_vals[curIndex];
+        curIndex++;
+    }
+
+    for (var i = stars; i <= 6; i++) {
+        statsObj[i]['unawakened']['def_min'] = table_vals[curIndex];
+        curIndex++;
+        statsObj[i]['unawakened']['def_max'] = table_vals[curIndex];
+        curIndex++;
+    }
+
+    if(monsterObj.awakens){
+        //unawakened stats
+        for (var i = stars; i <= 6; i++) {
+            statsObj[i]['awakened'] = {};
+        }
+
+        for (var i = stars; i <= 6; i++) {
+            statsObj[i]['awakened']['hp_min'] = table_vals[curIndex];
+            curIndex++;
+            statsObj[i]['awakened']['hp_max'] = table_vals[curIndex];
+            curIndex++;
+        }
+
+        for (var i = stars; i <= 6; i++) {
+            statsObj[i]['awakened']['atk_min'] = table_vals[curIndex];
+            curIndex++;
+            statsObj[i]['awakened']['atk_max'] = table_vals[curIndex];
+            curIndex++;
+        }
+
+        for (var i = stars; i <= 6; i++) {
+            statsObj[i]['awakened']['def_min'] = table_vals[curIndex];
+            curIndex++;
+            statsObj[i]['awakened']['def_max'] = table_vals[curIndex];
+            curIndex++;
+        }
+    }
+
+    var tableText = $('.boxborder')['3'].outerText;
+
+    var table_vals = [];
+
+    do {
+        match = re.exec(tableText);
+        if (match) {
+            table_vals.push(parseInt(match[0]));
+        }
+    } while (match);
+
+    for (var i = stars; i <= 6; i++) {
+        statsObj[i]['unawakened']['spd'] = table_vals[0];
+        statsObj[i]['unawakened']['crit_rate'] = table_vals[1];
+        statsObj[i]['unawakened']['crit_dmg'] = table_vals[2];
+        statsObj[i]['unawakened']['res'] = table_vals[3];
+        statsObj[i]['unawakened']['acc'] = table_vals[4];
+
+        if(monsterObj.awakens){
+            statsObj[i]['awakened']['spd'] = table_vals[5];
+            statsObj[i]['awakened']['crit_rate'] = table_vals[6];
+            statsObj[i]['awakened']['crit_dmg'] = table_vals[7];
+            statsObj[i]['awakened']['res'] = table_vals[8];
+            statsObj[i]['awakened']['acc'] = table_vals[9];
+        }
+    }
 }
 
 /*
