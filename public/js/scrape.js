@@ -76,7 +76,17 @@ function extractBasicInfo(monsterObj){
     - awakened_portrait
 */
 function extractPortaitLinks(monsterObj){
+  var imgs = $('#images a');
+  if (imgs.length == 2){
+    var u = imgs[0].href;
+    var a = imgs[1].href;
 
+    monsterObj.unawakened_portrait = u;
+    monsterObj.awakened_portrait = a;
+  } else{
+    var u = imgs[0].href;
+    monsterObj.unawakened_portrait = u;
+  }
 }
 
 /*
@@ -130,7 +140,104 @@ function extractBaseStats(monsterObj){
 
 */
 function extractMoves(monsterObj){
+  monsterObj.moves = {};
 
+  var tr_list = $("#skills .monstertable tr");
+
+
+
+  var last_skill = null;
+  var seen_skills = [];
+  tr_list.each( function(){
+    var tds = $(this).find('td');
+ //used to determine where the skill ups go
+
+    for (var i=0; i< tds.length; i++){
+      if (tds[i].firstElementChild){
+        if (tds[i].firstElementChild.localName == "div"){
+          //Leader skill
+          monsterObj.moves['Leader Skill'] = {};
+          monsterObj.moves['Leader Skill'].description = $(tds[i].firstElementChild).attr('title');
+          monsterObj.moves['Leader Skill'].moveIcon = $(tds[i]).find('img').attr('data-src');
+          monsterObj.moves['Leader Skill'].awakened = true;
+
+          if ($(tds[i+1]).find('span').length > 0){
+            monsterObj.moves['Leader Skill'].unawakened = false;
+          } else {
+            monsterObj.moves['Leader Skill'].unawakened = true;
+          }
+        }
+
+        if (tds[i].firstElementChild.localName == "a"){
+          //Normal skill
+          var move_name = tds[i+1].firstElementChild.innerText;
+          last_skill = move_name;
+
+          monsterObj.moves[move_name] = {};
+
+          if ($(tds[i+1]).find('span').length > 0){
+            for (var z = 0; z < seen_skills.length; z++){
+              if (move_name == ( seen_skills[z] + " (Strengthened)")){
+                monsterObj.moves[seen_skills[z]].awakened = false;
+              }
+            }
+            monsterObj.moves[move_name].unawakened = false;
+            monsterObj.moves[move_name].awakened = true;
+          } else {
+            monsterObj.moves[move_name].awakened = true;
+            monsterObj.moves[move_name].unawakened = true;
+          }
+
+          monsterObj.moves[move_name].moveIcon = $(tds[i]).find('a').attr('href');
+          monsterObj.moves[move_name].base_formula = $(tds[i]).find('span')[0].innerText;
+          monsterObj.moves[move_name].description = tds[i+1].innerText;
+          seen_skills.push(move_name);
+        }
+
+        if (tds[i].firstElementChild.localName == "ul"){
+          //skillups
+          monsterObj.moves[last_skill].skill_levels = {};
+          var li_list = $(tds[i]).find('li');
+
+          for (var x = 2; x < li_list.length + 2; x++){
+            monsterObj.moves[last_skill].skill_levels[x] = {};
+
+
+            if (li_list[x-2].innerText.match(/^.*Damage.*?(\d+).*$/)){
+              var m = li_list[x-2].innerText.match(/^.*Damage.*?(\d+).*$/);
+              monsterObj.moves[last_skill].skill_levels[x].type = "damage";
+              monsterObj.moves[last_skill].skill_levels[x].value = parseInt(m[1]);
+            }
+
+            if (li_list[x-2].innerText.match(/^.*Harmful Effect Rate.*?(\d+).*$/)){
+              var m = li_list[x-2].innerText.match(/^.*Harmful Effect Rate.*?(\d+).*$/);
+              monsterObj.moves[last_skill].skill_levels[x].type = "harmful_effect";
+              monsterObj.moves[last_skill].skill_levels[x].value = parseInt(m[1]);
+            }
+
+            if (li_list[x-2].innerText.match(/^.*Recovery.*?(\d+).*$/)){
+              var m = li_list[x-2].innerText.match(/^.*Recovery.*?(\d+).*$/);
+              monsterObj.moves[last_skill].skill_levels[x].type = "recovery";
+              monsterObj.moves[last_skill].skill_levels[x].value = parseInt(m[1]);
+            }
+
+            if (li_list[x-2].innerText.match(/^.*Shield.*?(\d+).*$/)){
+              var m = li_list[x-2].innerText.match(/^.*Shield.*?(\d+).*$/);
+              monsterObj.moves[last_skill].skill_levels[x].type = "shield";
+              monsterObj.moves[last_skill].skill_levels[x].value = parseInt(m[1]);
+            }
+
+            if (li_list[x-2].innerText.match(/^.*Cooltime Turn.*?(\d+).*$/)){
+              var m = li_list[x-2].innerText.match(/^.*Cooltime Turn.*?(\d+).*$/);
+              monsterObj.moves[last_skill].skill_levels[x].type = "cooldown";
+              monsterObj.moves[last_skill].skill_levels[x].value = parseInt(m[1]);
+            }
+
+          }
+        }
+      }
+    }
+  })
 }
 
 (function(console) {
